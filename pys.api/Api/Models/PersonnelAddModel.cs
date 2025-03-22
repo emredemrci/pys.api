@@ -1,6 +1,6 @@
-﻿namespace pys.api.Models
+﻿namespace pys.api.Api.Model
 {
-    public class PersonnelModel
+    public class PersonnelAddModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pys.api.Data;
 
@@ -11,9 +12,11 @@ using pys.api.Data;
 namespace pys.api.Migrations
 {
     [DbContext(typeof(PYSDBContext))]
-    partial class PYSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250321194819_pys_newup")]
+    partial class pys_newup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

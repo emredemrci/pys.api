@@ -1,6 +1,6 @@
-﻿namespace pys.api.Models
+﻿namespace pys.api.Entities
 {
-    public class PersonnelSalaryModel
+    public class PersonnelSalary
     {
         public int Id { get; set; }
 
@@ -10,7 +10,7 @@
 
         public string Surname { get; set; }
 
-       
-       
+
+
     }
 }

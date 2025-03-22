@@ -9,5 +9,7 @@ namespace pys.api.Data
         public PYSDBContext(DbContextOptions<PYSDBContext> options) : base(options) { }
 
         public virtual DbSet<Personnel> Personnel { get; set; }
+
+        public virtual DbSet<PersonnelSalary> PersonnelSalary { get; set; }
     }
 }
