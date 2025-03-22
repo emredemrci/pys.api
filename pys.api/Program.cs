@@ -30,9 +30,20 @@
 
 
 
+
+
+
+
+
+
+
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using pys.api.Data;
 using pys.api.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +69,27 @@ builder.Services.AddCors(options =>
     });
 });
 
+// 🔹 JWT Yapılandırması
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            ValidateLifetime = true
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 // ✅ Web Uygulamasını Oluştur
 var app = builder.Build();
 
@@ -75,12 +107,12 @@ app.UseStaticFiles();
 // 🔹 CORS Aktif Et
 app.UseCors("AllowAll");
 
-// 🔹 Routing (Yönlendirme)
-app.UseRouting();
-
-// 🔹 Authentication & Authorization (Eğer gerekiyorsa)
+// 🔹 Authentication & Authorization (Kimlik Doğrulama & Yetkilendirme)
 app.UseAuthentication();
 app.UseAuthorization();
+
+// 🔹 Routing (Yönlendirme)
+app.UseRouting();
 
 // 🔹 Varsayılan Rota Tanımlaması
 app.MapControllerRoute(
@@ -90,44 +122,64 @@ app.MapControllerRoute(
 // ✅ Uygulamayı Başlat
 app.Run();
 
-
 //using Microsoft.EntityFrameworkCore;
 //using pys.api.Data;
+//using pys.api.Services;
 
 //var builder = WebApplication.CreateBuilder(args);
 
-//// SQL Server bağlantısını ekleyelim
+//// 🔹 SQL Server Bağlantısı
 //builder.Services.AddDbContext<PYSDBContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//// MVC desteği ekleyelim
+//// 🔹 Servis Bağımlılıklarını Enjekte Et
+//builder.Services.AddScoped<IPersonnelSalaryService, PersonnelSalaryService>();
+//builder.Services.AddScoped<IPersonnelService, PersonnelService>();
+
+//// 🔹 Controller Desteği Ekleyelim
 //builder.Services.AddControllersWithViews();
 
-//// **URL belirleme**
-//var url = builder.Configuration["ApplicationUrl"] ?? "http://localhost:4000";
-//builder.WebHost.UseUrls(url); // ✅ Doğru yöntem
+//// 🔹 CORS Desteği (Eğer frontend ile iletişim olacaksa)
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll", policy =>
+//    {
+//        policy.AllowAnyOrigin()
+//              .AllowAnyMethod()
+//              .AllowAnyHeader();
+//    });
+//});
 
-//// Web uygulaması oluştur
+//// ✅ Web Uygulamasını Oluştur
 //var app = builder.Build();
 
-//// Eğer geliştirme ortamında değilsek, hata sayfası ve HSTS kullan
+//// 🔹 Hata Yönetimi & Güvenlik Ayarları
 //if (!app.Environment.IsDevelopment())
 //{
 //    app.UseExceptionHandler("/Home/Error");
 //    app.UseHsts();
 //}
 
-//// HTTPS yönlendirme, statik dosyalar ve routing ekleyelim
+//// 🔹 HTTPS Yönlendirme & Statik Dosyalar
 //app.UseHttpsRedirection();
 //app.UseStaticFiles();
+
+//// 🔹 CORS Aktif Et
+//app.UseCors("AllowAll");
+
+//// 🔹 Routing (Yönlendirme)
 //app.UseRouting();
+
+//// 🔹 Authentication & Authorization (Eğer gerekiyorsa)
+//app.UseAuthentication();
 //app.UseAuthorization();
 
-//// Varsayılan rota tanımlayalım
+//// 🔹 Varsayılan Rota Tanımlaması
 //app.MapControllerRoute(
 //    name: "default",
 //    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-//// Uygulamayı başlatalım
+//// ✅ Uygulamayı Başlat
 //app.Run();
+
 
